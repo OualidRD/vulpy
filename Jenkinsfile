@@ -50,6 +50,28 @@ pipeline {
                 '''
             }
         }
+
+        stage('SCA - Trivy: Image Scan') {
+            steps {
+                echo 'Scanning Docker image for vulnerabilities...'
+                sh '''
+                    cd /vulpy
+                    trivy image --format json --output trivy-image.json vulpy:latest || true
+                    trivy image --format table vulpy:latest || true
+                '''
+            }
+        }
+
+        stage('SCA - Trivy: Filesystem Scan') {
+            steps {
+                echo 'Scanning filesystem for vulnerabilities...'
+                sh '''
+                    cd /vulpy
+                    trivy fs --format json --output trivy-fs.json . || true
+                    trivy fs --severity HIGH,CRITICAL --format table . || true
+                '''
+            }
+        }
     }
 
     post {
