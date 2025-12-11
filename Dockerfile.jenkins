@@ -1,0 +1,31 @@
+# Dockerfile.jenkins - Custom Jenkins Agent
+# Based on Listing 2 & 3: Jenkins Agent with SAST and SCA Tools
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Install Docker CLI for Docker-in-Docker functionality
+RUN apt-get update && apt-get install -y \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Bandit (SAST) - Version 1.8.6 using pipx
+RUN apt-get update && apt-get install -y \
+    pipx \
+    && pipx install bandit==1.8.6 \
+    && ln -s /root/.local/bin/bandit /usr/local/bin/bandit \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Trivy (SCA) - Version 0.48.0 from GitHub releases
+RUN apt-get update && apt-get install -y \
+    wget \
+    && wget -q https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -O /tmp/trivy.tar.gz \
+    && tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin/ trivy \
+    && rm /tmp/trivy.tar.gz \
+    && rm -rf /var/lib/apt/lists/*
+
+# Switch back to jenkins user
+USER jenkins
+
+# Expose Jenkins ports
+EXPOSE 8080 50000

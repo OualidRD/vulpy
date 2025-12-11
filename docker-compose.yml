@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins-vulpy
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      # Map Docker socket for Docker-in-Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Map current project directory to /vulpy inside the container for source code access
+      - ./:/vulpy
+      # Jenkins data persistence
+      - jenkins_home:/var/jenkins_home
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    networks:
+      - vulpy-network
+
+  vulpy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vulpy-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./bad:/app/bad
+      - ./good:/app/good
+      - ./utils:/app/utils
+    networks:
+      - vulpy-network
+    depends_on:
+      - jenkins
+
+volumes:
+  jenkins_home:
+
+networks:
+  vulpy-network:
+    driver: bridge
