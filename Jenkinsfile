@@ -23,6 +23,7 @@ pipeline {
                         if ! command -v trivy &> /dev/null; then
                             echo "Installing Trivy..."
                             cd /tmp
+                            rm -f trivy* LICENSE README.md
                             curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
                             tar xzf trivy.tar.gz
                             mv trivy /usr/local/bin/
@@ -152,9 +153,7 @@ pipeline {
                 if [ -f /vulpy/bandit-good.html ]; then
                     cp /vulpy/bandit-good.html . || true
                 fi
-                if [ -f /vulpy/trivy-*.json ]; then
-                    cp /vulpy/trivy-*.json . || true
-                fi
+                cp /vulpy/trivy-*.json . 2>/dev/null || true
             '''
         }
 
