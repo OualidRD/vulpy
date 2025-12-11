@@ -19,20 +19,18 @@ pipeline {
                 echo 'Installing/verifying security tools...'
                 script {
                     sh '''
-                        # Ensure Trivy is available
-                        if ! command -v trivy &> /dev/null; then
-                            echo "Installing Trivy..."
-                            cd /tmp
-                            rm -f trivy.tar.gz 2>/dev/null || true
-                            curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
-                            tar xzf trivy.tar.gz trivy --no-same-owner 2>/dev/null || tar xzf trivy.tar.gz trivy
-                            mv trivy /usr/local/bin/
-                            rm -f trivy.tar.gz
-                            chmod +x /usr/local/bin/trivy
-                        fi
                         echo "Verifying tools:"
                         bandit --version
-                        trivy --version
+                        
+                        # Trivy should already be in the container
+                        if command -v trivy &> /dev/null; then
+                            trivy --version
+                        else
+                            echo "Trivy not found, installing..."
+                            cd /tmp && curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
+                            tar xzf trivy.tar.gz trivy && sudo mv trivy /usr/local/bin/ && rm trivy.tar.gz
+                            trivy --version
+                        fi
                     '''
                 }
             }
