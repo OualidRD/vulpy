@@ -80,7 +80,7 @@ pre {
         <div class="metrics-title">
             Metrics:<br>
         </div>
-        Total lines of code: <span id="loc">567</span><br>
+        Total lines of code: <span id="loc">581</span><br>
         Total lines skipped (#nosec): <span id="nosec">0</span>
     </div>
 </div>
@@ -98,7 +98,7 @@ pre {
     <b>Severity: </b>MEDIUM<br>
     <b>Confidence: </b>MEDIUM<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/377.html" target="_blank">CWE-377</a><br>
-    <b>File: </b><a href="/vulpy/good/cutpasswd.py" target="_blank">/vulpy/good/cutpasswd.py</a><br>
+    <b>File: </b><a href="good/cutpasswd.py" target="_blank">good/cutpasswd.py</a><br>
     <b>Line number: </b>3<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html</a><br>
 
@@ -121,7 +121,7 @@ pre {
     <b>Severity: </b>MEDIUM<br>
     <b>Confidence: </b>LOW<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/400.html" target="_blank">CWE-400</a><br>
-    <b>File: </b><a href="/vulpy/good/httpbrute.py" target="_blank">/vulpy/good/httpbrute.py</a><br>
+    <b>File: </b><a href="good/httpbrute.py" target="_blank">good/httpbrute.py</a><br>
     <b>Line number: </b>22<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b113_request_without_timeout.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b113_request_without_timeout.html</a><br>
 
@@ -144,7 +144,7 @@ pre {
     <b>Severity: </b>LOW<br>
     <b>Confidence: </b>MEDIUM<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/259.html" target="_blank">CWE-259</a><br>
-    <b>File: </b><a href="/vulpy/good/libapi.py" target="_blank">/vulpy/good/libapi.py</a><br>
+    <b>File: </b><a href="good/libapi.py" target="_blank">good/libapi.py</a><br>
     <b>Line number: </b>10<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html</a><br>
 
@@ -167,7 +167,7 @@ pre {
     <b>Severity: </b>LOW<br>
     <b>Confidence: </b>HIGH<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/703.html" target="_blank">CWE-703</a><br>
-    <b>File: </b><a href="/vulpy/good/libsession.py" target="_blank">/vulpy/good/libsession.py</a><br>
+    <b>File: </b><a href="good/libsession.py" target="_blank">good/libsession.py</a><br>
     <b>Line number: </b>22<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html</a><br>
 
@@ -191,7 +191,7 @@ pre {
     <b>Severity: </b>MEDIUM<br>
     <b>Confidence: </b>MEDIUM<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/89.html" target="_blank">CWE-89</a><br>
-    <b>File: </b><a href="/vulpy/good/libuser.py" target="_blank">/vulpy/good/libuser.py</a><br>
+    <b>File: </b><a href="good/libuser.py" target="_blank">good/libuser.py</a><br>
     <b>Line number: </b>61<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b608_hardcoded_sql_expressions.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b608_hardcoded_sql_expressions.html</a><br>
 
@@ -214,7 +214,7 @@ pre {
     <b>Severity: </b>LOW<br>
     <b>Confidence: </b>MEDIUM<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/259.html" target="_blank">CWE-259</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy-ssl.py" target="_blank">/vulpy/good/vulpy-ssl.py</a><br>
+    <b>File: </b><a href="good/vulpy-ssl.py" target="_blank">good/vulpy-ssl.py</a><br>
     <b>Line number: </b>13<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html</a><br>
 
@@ -231,20 +231,21 @@ pre {
 </div>
 
 <div id="issue-6">
-<div class="issue-block issue-sev-high">
-    <b>flask_debug_true: </b> A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the execution of arbitrary code.<br>
-    <b>Test ID:</b> B201<br>
-    <b>Severity: </b>HIGH<br>
+<div class="issue-block issue-sev-medium">
+    <b>hardcoded_bind_all_interfaces: </b> Possible binding to all interfaces.<br>
+    <b>Test ID:</b> B104<br>
+    <b>Severity: </b>MEDIUM<br>
     <b>Confidence: </b>MEDIUM<br>
-    <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/94.html" target="_blank">CWE-94</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy-ssl.py" target="_blank">/vulpy/good/vulpy-ssl.py</a><br>
-    <b>Line number: </b>29<br>
-    <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b201_flask_debug_true.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b201_flask_debug_true.html</a><br>
+    <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/605.html" target="_blank">CWE-605</a><br>
+    <b>File: </b><a href="good/vulpy-ssl.py" target="_blank">good/vulpy-ssl.py</a><br>
+    <b>Line number: </b>46<br>
+    <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html</a><br>
 
 <div class="code">
 <pre>
-28	
-29	app.run(debug=True, host=&#x27;127.0.1.1&#x27;, ssl_context=(&#x27;/tmp/acme.cert&#x27;, &#x27;/tmp/acme.key&#x27;))
+45	        debug=debug_mode,
+46	        host=&#x27;0.0.0.0&#x27;,
+47	        ssl_context=(cert_path, key_path)
 </pre>
 </div>
 
@@ -253,57 +254,13 @@ pre {
 </div>
 
 <div id="issue-7">
-<div class="issue-block issue-sev-medium">
-    <b>hardcoded_tmp_directory: </b> Probable insecure usage of temp file/directory.<br>
-    <b>Test ID:</b> B108<br>
-    <b>Severity: </b>MEDIUM<br>
-    <b>Confidence: </b>MEDIUM<br>
-    <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/377.html" target="_blank">CWE-377</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy-ssl.py" target="_blank">/vulpy/good/vulpy-ssl.py</a><br>
-    <b>Line number: </b>29<br>
-    <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html</a><br>
-
-<div class="code">
-<pre>
-28	
-29	app.run(debug=True, host=&#x27;127.0.1.1&#x27;, ssl_context=(&#x27;/tmp/acme.cert&#x27;, &#x27;/tmp/acme.key&#x27;))
-</pre>
-</div>
-
-
-</div>
-</div>
-
-<div id="issue-8">
-<div class="issue-block issue-sev-medium">
-    <b>hardcoded_tmp_directory: </b> Probable insecure usage of temp file/directory.<br>
-    <b>Test ID:</b> B108<br>
-    <b>Severity: </b>MEDIUM<br>
-    <b>Confidence: </b>MEDIUM<br>
-    <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/377.html" target="_blank">CWE-377</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy-ssl.py" target="_blank">/vulpy/good/vulpy-ssl.py</a><br>
-    <b>Line number: </b>29<br>
-    <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b108_hardcoded_tmp_directory.html</a><br>
-
-<div class="code">
-<pre>
-28	
-29	app.run(debug=True, host=&#x27;127.0.1.1&#x27;, ssl_context=(&#x27;/tmp/acme.cert&#x27;, &#x27;/tmp/acme.key&#x27;))
-</pre>
-</div>
-
-
-</div>
-</div>
-
-<div id="issue-9">
 <div class="issue-block issue-sev-low">
     <b>hardcoded_password_string: </b> Possible hardcoded password: '123aa8a93bdde342c871564a62282af857bda14b3359fde95d0c5e4b321610c1'<br>
     <b>Test ID:</b> B105<br>
     <b>Severity: </b>LOW<br>
     <b>Confidence: </b>MEDIUM<br>
     <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/259.html" target="_blank">CWE-259</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy.py" target="_blank">/vulpy/good/vulpy.py</a><br>
+    <b>File: </b><a href="good/vulpy.py" target="_blank">good/vulpy.py</a><br>
     <b>Line number: </b>17<br>
     <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b105_hardcoded_password_string.html</a><br>
 
@@ -312,29 +269,6 @@ pre {
 16	app = Flask(&#x27;vulpy&#x27;)
 17	app.config[&#x27;SECRET_KEY&#x27;] = &#x27;123aa8a93bdde342c871564a62282af857bda14b3359fde95d0c5e4b321610c1&#x27;
 18	
-</pre>
-</div>
-
-
-</div>
-</div>
-
-<div id="issue-10">
-<div class="issue-block issue-sev-high">
-    <b>flask_debug_true: </b> A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the execution of arbitrary code.<br>
-    <b>Test ID:</b> B201<br>
-    <b>Severity: </b>HIGH<br>
-    <b>Confidence: </b>MEDIUM<br>
-    <b>CWE: </b><a href="https://cwe.mitre.org/data/definitions/94.html" target="_blank">CWE-94</a><br>
-    <b>File: </b><a href="/vulpy/good/vulpy.py" target="_blank">/vulpy/good/vulpy.py</a><br>
-    <b>Line number: </b>53<br>
-    <b>More info: </b><a href="https://bandit.readthedocs.io/en/1.8.6/plugins/b201_flask_debug_true.html" target="_blank">https://bandit.readthedocs.io/en/1.8.6/plugins/b201_flask_debug_true.html</a><br>
-
-<div class="code">
-<pre>
-52	
-53	app.run(debug=True, host=&#x27;127.0.1.1&#x27;, port=5001, extra_files=&#x27;csp.txt&#x27;)
-54	
 </pre>
 </div>
 

@@ -50,5 +50,10 @@ def add_csp_headers(response):
         response.headers['Content-Security-Policy'] = csp
     return response
 
-app.run(debug=True, host='127.0.1.1', port=5001, extra_files='csp.txt')
+# SECURITY FIX: Disable debug mode in production
+# Debug mode exposes Werkzeug debugger allowing arbitrary code execution
+if __name__ == '__main__':
+    import os
+    debug_mode = os.environ.get('FLASK_ENV') == 'development'
+    app.run(debug=debug_mode, host='127.0.0.1', port=5001, extra_files='csp.txt')
 
