@@ -23,7 +23,7 @@ pipeline {
                         if ! command -v trivy &> /dev/null; then
                             echo "Installing Trivy..."
                             cd /tmp
-                            rm -f trivy* LICENSE README.md
+                            rm -f trivy trivy.tar.gz 2>/dev/null || true
                             curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
                             tar xzf trivy.tar.gz
                             mv trivy /usr/local/bin/
