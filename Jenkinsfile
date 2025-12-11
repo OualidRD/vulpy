@@ -7,6 +7,27 @@ pipeline {
     }
 
     stages {
+        stage('Setup Tools') {
+            steps {
+                echo 'Installing/verifying security tools...'
+                script {
+                    sh '''
+                        # Ensure Trivy is available
+                        if ! command -v trivy &> /dev/null; then
+                            echo "Installing Trivy..."
+                            cd /tmp
+                            curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
+                            tar xzf trivy.tar.gz
+                            mv trivy /usr/local/bin/
+                            rm -f trivy.tar.gz
+                            chmod +x /usr/local/bin/trivy
+                        fi
+                        trivy --version
+                    '''
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 echo 'Checking out source code...'
@@ -14,7 +35,7 @@ pipeline {
             }
         }
 
-        stage('Install Tools') {
+        stage('SAST - Bandit') {
             steps {
                 echo 'Installing security scanning tools...'
                 script {
