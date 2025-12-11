@@ -14,6 +14,27 @@ pipeline {
             }
         }
 
+        stage('Install Tools') {
+            steps {
+                echo 'Installing security scanning tools...'
+                script {
+                    // Ensure Trivy is installed
+                    sh '''
+                        if ! command -v trivy &> /dev/null; then
+                            echo "Installing Trivy..."
+                            cd /tmp
+                            curl -fL https://github.com/aquasecurity/trivy/releases/download/v0.48.0/trivy_0.48.0_Linux-64bit.tar.gz -o trivy.tar.gz
+                            tar xzf trivy.tar.gz
+                            mv trivy /usr/local/bin/
+                            rm -f trivy.tar.gz
+                            chmod +x /usr/local/bin/trivy
+                        fi
+                        trivy --version
+                    '''
+                }
+            }
+        }
+
         stage('SAST - Bandit') {
             steps {
                 echo 'Running Bandit SAST analysis...'
@@ -120,29 +141,19 @@ pipeline {
             archiveArtifacts artifacts: '**/*.html,**/*.json', 
                              allowEmptyArchive: true,
                              fingerprint: true
-
-            // Publish Bandit reports as HTML
-            script {
-                if (fileExists('/vulpy/bandit-bad.html')) {
-                    publishHTML([
-                        reportDir: '/vulpy',
-                        reportFiles: 'bandit-bad.html',
-                        reportName: 'Bandit Analysis - BAD Directory',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-                
-                if (fileExists('/vulpy/bandit-good.html')) {
-                    publishHTML([
-                        reportDir: '/vulpy',
-                        reportFiles: 'bandit-good.html',
-                        reportName: 'Bandit Analysis - GOOD Directory',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-                }
-            }
+            
+            // Copy reports to workspace for artifact storage
+            sh '''
+                if [ -f /vulpy/bandit-bad.html ]; then
+                    cp /vulpy/bandit-bad.html . || true
+                fi
+                if [ -f /vulpy/bandit-good.html ]; then
+                    cp /vulpy/bandit-good.html . || true
+                fi
+                if [ -f /vulpy/trivy-*.json ]; then
+                    cp /vulpy/trivy-*.json . || true
+                fi
+            '''
         }
 
         success {
