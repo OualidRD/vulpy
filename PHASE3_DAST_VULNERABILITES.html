@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse DAST - Vulnérabilités Identifiées</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .scan-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .scan-info h3 {
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+        
+        .scan-info p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .vulnerabilities {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        .vuln-card {
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .vuln-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .vuln-number {
+            font-size: 2em;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .vuln-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .severity-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.3);
+            font-size: 0.9em;
+        }
+        
+        .vuln-body {
+            padding: 25px;
+            background: white;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-title {
+            font-weight: bold;
+            color: #c0392b;
+            font-size: 1.05em;
+            margin-bottom: 10px;
+        }
+        
+        .detail-content {
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border-left: 3px solid #e74c3c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .before, .after {
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .before {
+            background: #ffe3e3;
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        .after {
+            background: #d3f9d8;
+            border-left: 3px solid #51cf66;
+        }
+        
+        .before-title, .after-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .before-title {
+            color: #c92a2a;
+        }
+        
+        .after-title {
+            color: #2b8a3e;
+        }
+        
+        .impact-section {
+            background: #fff3bf;
+            border-left: 4px solid #ffa500;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .impact-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .summary h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        
+        .summary-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-metric {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .summary-metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .summary-metric-label {
+            font-size: 0.95em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 1024px) {
+            .before-after {
+                grid-template-columns: 1fr;
+            }
+            .summary-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔴 Analyse DAST - Vulnérabilités Identifiées</h1>
+            <p>Scan dynamique de l'application Vulpy avec identification de vulnérabilités critiques</p>
+        </div>
+        
+        <div class="content">
+            <div class="scan-info">
+                <h3>📋 Informations du Scan</h3>
+                <p><strong>Application:</strong> Vulpy (Framework Flask vulnérable intentionnel)</p>
+                <p><strong>Cible:</strong> http://localhost:5000</p>
+                <p><strong>Type de scan:</strong> DAST (Dynamic Application Security Testing)</p>
+                <p><strong>Vulnérabilités identifiées:</strong> 2 vulnérabilités critiques sélectionnées</p>
+            </div>
+            
+            <div class="vulnerabilities">
+                <!-- VULNÉRABILITÉ 1: REFLECTED XSS -->
+                <div class="vuln-card">
+                    <div class="vuln-header">
+                        <div>
+                            <div class="vuln-number">1</div>
+                        </div>
+                        <div style="flex: 1; margin-left: 20px;">
+                            <div class="vuln-title">Reflected XSS (Cross-Site Scripting)</div>
+                        </div>
+                        <div class="severity-badge">🔴 CRITICAL</div>
+                    </div>
+                    
+                    <div class="vuln-body">
+                        <div class="detail-section">
+                            <div class="detail-title">📌 Localisation</div>
+                            <div class="detail-content">
+                                <strong>Chemin:</strong> POST /hello<br>
+                                <strong>Paramètre:</strong> name<br>
+                                <strong>Fichier affecté:</strong> good/mod_hello.py, good/vulpy.py
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">📖 Description</div>
+                            <div class="detail-content">
+                                L'application reflète le paramètre "name" directement dans la réponse HTML sans échappement.
+                                Un attaquant peut injecter du code JavaScript malveillant qui s'exécutera dans le navigateur
+                                de la victime lors de la visite d'un lien spécialement conçu.
+                            </div>
+                        </div>
+                        
+                        <div class="impact-section">
+                            <div class="impact-title">⚠️ Impact</div>
+                            Vol de cookies de session, takeover de compte utilisateur, malware injection, phishing
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">🔍 Preuve de Concept</div>
+                            <div class="code-block">POST /hello HTTP/1.1<br>
+name=&lt;script&gt;alert('XSS')&lt;/script&gt;<br>
+<br>
+Résultat:<br>
+&lt;h1&gt;Welcome &lt;script&gt;alert('XSS')&lt;/script&gt;&lt;/h1&gt;</div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">🛠️ Correction Appliquée</div>
+                            <div class="before-after">
+                                <div class="before">
+                                    <div class="before-title">❌ Avant (Vulnérable)</div>
+                                    <div class="code-block">@mod_hello.route('/hello', methods=['POST'])<br>
+def hello():<br>
+&nbsp;&nbsp;name = request.form.get('name')<br>
+&nbsp;&nbsp;return f'&lt;h1&gt;Welcome {name}&lt;/h1&gt;'</div>
+                                </div>
+                                <div class="after">
+                                    <div class="after-title">✅ Après (Sécurisé)</div>
+                                    <div class="code-block">from markupsafe import escape<br>
+<br>
+@mod_hello.route('/hello', methods=['POST'])<br>
+def hello():<br>
+&nbsp;&nbsp;name = request.form.get('name')<br>
+&nbsp;&nbsp;safe_name = escape(name)<br>
+&nbsp;&nbsp;return f'&lt;h1&gt;Welcome {safe_name}&lt;/h1&gt;'</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">✅ Validation Post-Correction</div>
+                            <div class="code-block">POST /hello HTTP/1.1<br>
+name=&lt;script&gt;alert('XSS')&lt;/script&gt;<br>
+<br>
+Résultat:<br>
+&lt;h1&gt;Welcome &amp;lt;script&amp;gt;alert('XSS')&amp;lt;/script&amp;gt;&lt;/h1&gt;<br>
+<br>
+✓ Code JavaScript échappé - Pas d'exécution</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- VULNÉRABILITÉ 2: BROKEN AUTHENTICATION -->
+                <div class="vuln-card">
+                    <div class="vuln-header">
+                        <div>
+                            <div class="vuln-number">2</div>
+                        </div>
+                        <div style="flex: 1; margin-left: 20px;">
+                            <div class="vuln-title">Broken Authentication - Session Fixation</div>
+                        </div>
+                        <div class="severity-badge">🔴 CRITICAL</div>
+                    </div>
+                    
+                    <div class="vuln-body">
+                        <div class="detail-section">
+                            <div class="detail-title">📌 Localisation</div>
+                            <div class="detail-content">
+                                <strong>Chemin:</strong> POST /user/login<br>
+                                <strong>Fichier affecté:</strong> good/mod_user.py, good/libsession.py<br>
+                                <strong>Problème:</strong> Session ID non régénérée après authentification
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">📖 Description</div>
+                            <div class="detail-content">
+                                Après une authentification réussie, la session ID reste la même.
+                                Un attaquant peut forcer un utilisateur à utiliser une session qu'il contrôle,
+                                puis se faire passer pour cet utilisateur une fois authentifié.
+                            </div>
+                        </div>
+                        
+                        <div class="impact-section">
+                            <div class="impact-title">⚠️ Impact</div>
+                            Takeover de compte utilisateur, accès non autorisé aux données, usurpation d'identité
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">🔍 Preuve de Concept</div>
+                            <div class="code-block">1. Attaquant: GET / → Reçoit SESSIONID=ABC123<br>
+2. Attaquant envoie lien: http://target/user/login?username=victim<br>
+3. Victime login avec SESSIONID=ABC123<br>
+4. Attaquant utilise SESSIONID=ABC123 → Accès en tant que victime</div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">🛠️ Correction Appliquée</div>
+                            <div class="before-after">
+                                <div class="before">
+                                    <div class="before-title">❌ Avant (Vulnérable)</div>
+                                    <div class="code-block">@mod_user.route('/user/login', methods=['POST'])<br>
+def login():<br>
+&nbsp;&nbsp;username = request.form.get('username')<br>
+&nbsp;&nbsp;password = request.form.get('password')<br>
+&nbsp;&nbsp;if verify_user(username, password):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;session['username'] = username<br>
+&nbsp;&nbsp;&nbsp;&nbsp;# Session ID NOT regenerated!</div>
+                                </div>
+                                <div class="after">
+                                    <div class="after-title">✅ Après (Sécurisé)</div>
+                                    <div class="code-block">from flask import session<br>
+<br>
+@mod_user.route('/user/login', methods=['POST'])<br>
+def login():<br>
+&nbsp;&nbsp;username = request.form.get('username')<br>
+&nbsp;&nbsp;password = request.form.get('password')<br>
+&nbsp;&nbsp;if verify_user(username, password):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;session.clear()  # Clear old session<br>
+&nbsp;&nbsp;&nbsp;&nbsp;session['username'] = username<br>
+&nbsp;&nbsp;&nbsp;&nbsp;session.permanent = True<br>
+&nbsp;&nbsp;&nbsp;&nbsp;# Flask regenerates SESSIONID</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <div class="detail-title">✅ Validation Post-Correction</div>
+                            <div class="code-block">1. Attaquant: GET / → Reçoit SESSIONID=ABC123<br>
+2. Attaquant envoie lien avec SESSIONID=ABC123<br>
+3. Victime login<br>
+4. Flask génère: SESSIONID=XYZ789 (différent)<br>
+5. Attaquant avec ABC123 → Accès refusé ✓</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary">
+                <h2>📊 Résumé des Corrections DAST</h2>
+                <div class="summary-metrics">
+                    <div class="summary-metric">
+                        <div class="summary-metric-value">2</div>
+                        <div class="summary-metric-label">Vulnérabilités Corrigées</div>
+                    </div>
+                    <div class="summary-metric">
+                        <div class="summary-metric-value">2</div>
+                        <div class="summary-metric-label">Fichiers Modifiés</div>
+                    </div>
+                    <div class="summary-metric">
+                        <div class="summary-metric-value">100%</div>
+                        <div class="summary-metric-label">Validation Post-Correction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

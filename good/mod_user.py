@@ -10,7 +10,8 @@ mod_user = Blueprint('mod_user', __name__, template_folder='templates')
 @mod_user.route('/login', methods=['GET', 'POST'])
 def do_login():
 
-    session.pop('username', None)
+    # SECURITY: Clear session to prevent session fixation
+    session.clear()
 
     if request.method == 'POST':
 
