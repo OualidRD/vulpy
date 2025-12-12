@@ -26,23 +26,4 @@ def do_home():
 def before_request():
     g.session = libsession.load(request)
 
-# SECURITY FIX #1: Disable debug mode in production
-# Debug mode exposes Werkzeug debugger allowing arbitrary code execution
-# SECURITY FIX #2: Use secure SSL certificate paths (not /tmp)
-if __name__ == '__main__':
-    import os
-    debug_mode = os.environ.get('FLASK_ENV') == 'development'
-    
-    # Use environment variables for SSL paths instead of hardcoded /tmp
-    cert_path = os.environ.get('SSL_CERT_PATH', '/etc/ssl/certs/server.crt')
-    key_path = os.environ.get('SSL_KEY_PATH', '/etc/ssl/private/server.key')
-    
-    # Verify certificates exist before starting
-    if not (os.path.exists(cert_path) and os.path.exists(key_path)):
-        raise ValueError(f"SSL certificates not found at {cert_path} or {key_path}")
-    
-    app.run(
-        debug=debug_mode,
-        host='0.0.0.0',
-        ssl_context=(cert_path, key_path)
-    )
+app.run(debug=True, host='127.0.1.1', ssl_context=('/tmp/acme.cert', '/tmp/acme.key'))
