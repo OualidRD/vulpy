@@ -4,15 +4,16 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Docker CLI for Docker-in-Docker functionality
-RUN apt-get update && apt-get install -y \
+# DS029: Install Docker CLI with --no-install-recommends
+RUN apt-get update && apt-get install -y --no-install-recommends \
     docker.io \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Fix Docker socket permissions for jenkins user
 RUN usermod -aG docker jenkins
 
-# Install Bandit (SAST) & dependencies
+# DS029: Install Bandit (SAST) & dependencies with --no-install-recommends
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-venv \
@@ -21,6 +22,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && /opt/bandit-venv/bin/pip install --no-cache-dir bandit==1.8.6 \
     && ln -s /opt/bandit-venv/bin/bandit /usr/local/bin/bandit \
     && rm -rf /var/lib/apt/lists/*
+
+# DS026: Add HEALTHCHECK for Jenkins container monitoring
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:8080 || exit 1
 
 # Install Trivy (SCA) - Will be installed post-startup via script if needed
 # For now, we'll rely on manual installation or container startup script
