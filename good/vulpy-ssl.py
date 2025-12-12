@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+from pathlib import Path
 from flask import Flask, g, redirect, request
 
 from mod_hello import mod_hello
@@ -10,7 +12,7 @@ from mod_mfa import mod_mfa
 import libsession
 
 app = Flask('vulpy')
-app.config['SECRET_KEY'] = 'aaaaaaa'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'change-me-in-production')
 
 app.register_blueprint(mod_hello, url_prefix='/hello')
 app.register_blueprint(mod_user, url_prefix='/user')
@@ -26,4 +28,13 @@ def do_home():
 def before_request():
     g.session = libsession.load(request)
 
-app.run(debug=True, host='127.0.1.1', ssl_context=('/tmp/acme.cert', '/tmp/acme.key'))
+# Debug mode basé sur variable d'environnement
+debug_mode = os.environ.get('FLASK_ENV') == 'development'
+cert_path = os.getenv('CERT_PATH', '/etc/ssl/certs/acme.cert')
+key_path = os.getenv('KEY_PATH', '/etc/ssl/private/acme.key')
+
+# Vérifier existence des certificats
+if not Path(cert_path).exists() or not Path(key_path).exists():
+    raise FileNotFoundError(f"Certificats SSL manquants: {cert_path} ou {key_path}")
+
+app.run(debug=debug_mode, host='127.0.1.1', ssl_context=(cert_path, key_path))

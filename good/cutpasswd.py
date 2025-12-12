@@ -1,6 +1,12 @@
+import os
 import re
+from pathlib import Path
 
-with open('/tmp/darkweb2017-top10000.txt') as f:
+password_file = os.getenv('PASSWORD_FILE', '/opt/passwords/darkweb2017-top10000.txt')
+if not Path(password_file).exists():
+    raise FileNotFoundError(f"Password file not found: {password_file}")
+
+with open(password_file) as f:
     for password in f.readlines():
 
         password = password.strip()

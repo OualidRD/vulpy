@@ -1,4 +1,5 @@
 import libuser
+import os
 import random
 import hashlib
 import re
@@ -7,7 +8,9 @@ from time import time
 
 from pathlib import Path
 
-secret = 'MYSUPERSECRETKEY'
+secret = os.getenv('API_SECRET_KEY', 'CHANGE_ME_IN_PRODUCTION')
+if secret == 'CHANGE_ME_IN_PRODUCTION':
+    raise ValueError("API_SECRET_KEY environment variable must be set")
 not_after = 60 # 1 minute
 
 def keygen(username, password=None, login=True):

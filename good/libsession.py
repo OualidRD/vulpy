@@ -19,8 +19,8 @@ def getcountry(request):
     try:
         geo = reader.country(request.remote_addr)
         country = geo.country.iso_code
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Warning: Failed to get country code for {request.remote_addr}: {e}")
 
     return country
 
