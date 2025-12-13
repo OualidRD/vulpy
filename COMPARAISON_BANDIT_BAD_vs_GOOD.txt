@@ -1,0 +1,54 @@
+================================================================================
+COMPARAISON DÉTAILLÉE: BANDIT BAD vs GOOD (SANS CORRECTION)
+================================================================================
+
+📊 RÉSUMÉ GLOBAL:
+================
+
+BAD (vulnérable):     22 vulnérabilités
+GOOD (actuellement):  11 vulnérabilités
+Différence:          -11 vulnérabilités
+
+⚠️ PROBLÈME IDENTIFIÉ:
+====================
+
+GOOD devrait avoir les MÊMES vulnérabilités que BAD car ils sont identiques!
+Mais GOOD a MOINS de vulnérabilités.
+
+Cela signifie que:
+✗ GOOD contient du code corrigé (donc moins de vulnérabilités)
+OU
+✗ Les fichiers de rapport ne correspondent pas au code
+OU
+✗ GOOD a été partiellement corrigé
+
+================================================================================
+
+🔍 ANALYSE DES VULNÉRABILITÉS:
+=====================================
+
+Selon votre extraction de bandit-good.html, on trouve:
+1. B108 - hardcoded_tmp_directory (good/cutpasswd.py)
+2. B113 - request_without_timeout (good/httpbrute.py)
+3. B105 - hardcoded_password_string (good/libapi.py)
+4. B110 - try_except_pass (good/libsession.py)
+5. B608 - hardcoded_sql_expressions (good/libuser.py)
+6. B105 - hardcoded_password_string (good/vulpy-ssl.py)
+7. B104 - hardcoded_bind_all_interfaces (good/vulpy-ssl.py)
+8. B105 - hardcoded_password_string (good/vulpy.py)
+
+MAIS vous dites voir 11 vulnérabilités dans bandit-good.html
+Et AVANT correction vous aviez 8 vulnérabilités!
+
+================================================================================
+
+✅ PLAN DE VÉRIFICATION:
+========================
+
+ÉTAPE 1: Vérifier l'état actuel de GOOD
+ÉTAPE 2: Vérifier l'état actuel de BAD
+ÉTAPE 3: S'assurer qu'ils sont identiques
+ÉTAPE 4: Rebuild le pipeline pour générer les rapports corrects
+ÉTAPE 5: Comparer les résultats
+
+================================================================================

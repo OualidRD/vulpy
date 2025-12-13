@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparaison SCA Trivy AVANT/APRÈS Corrections Dockerfile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button.active {
+            color: #f5576c;
+            border-bottom-color: #f5576c;
+        }
+        
+        .tab-button:hover {
+            background: #e9ecef;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .phase {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .phase-header {
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3em;
+            color: white;
+        }
+        
+        .phase-before .phase-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+        
+        .phase-after .phase-header {
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        }
+        
+        .phase-body {
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #f5576c;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f5576c;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .misconfig-list {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .misconfig-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            border-left: 3px solid;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .misconfig-high {
+            background: #ffe3e3;
+            border-left-color: #ff6b6b;
+        }
+        
+        .misconfig-medium {
+            background: #fff3bf;
+            border-left-color: #ffa500;
+        }
+        
+        .misconfig-low {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+        
+        .misconfig-title {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .misconfig-description {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .severity-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: white;
+            width: fit-content;
+        }
+        
+        .badge-high {
+            background: #ff6b6b;
+        }
+        
+        .badge-medium {
+            background: #ffa500;
+        }
+        
+        .badge-low {
+            background: #2196f3;
+        }
+        
+        .improvement {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #51cf66;
+            margin-top: 20px;
+        }
+        
+        .improvement-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #37b24d;
+            margin-bottom: 10px;
+        }
+        
+        .improvement-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+        
+        .improvement-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .improvement-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #51cf66;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #1565c0;
+        }
+        
+        .summary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .summary h3 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        
+        .summary p {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+        
+        @media (max-width: 1024px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Comparaison SCA (Trivy)</h1>
+            <p>Analyse des misconfigurations Dockerfile et vulnérabilités de dépendances</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('dockerfile')">📦 Dockerfile Misconfigs</button>
+            <button class="tab-button" onclick="showTab('supply-chain')">⛓️ Supply Chain Vulns</button>
+        </div>
+        
+        <div class="content">
+            <!-- TAB 1: DOCKERFILE MISCONFIGURATIONS -->
+            <div id="dockerfile" class="tab-content active">
+                <div class="comparison">
+                    <!-- PHASE 1 - AVANT -->
+                    <div class="phase phase-before">
+                        <div class="phase-header">❌ PHASE 1 - AVANT CORRECTIONS</div>
+                        <div class="phase-body">
+                            <div class="metrics">
+                                <div class="metric">
+                                    <div class="metric-value">4</div>
+                                    <div class="metric-label">Misconfigs détectées</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">2</div>
+                                    <div class="metric-label">HIGH</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">1</div>
+                                    <div class="metric-label">MEDIUM</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">1</div>
+                                    <div class="metric-label">LOW</div>
+                                </div>
+                            </div>
+                            
+                            <div class="misconfig-list">
+                                <div class="misconfig-item misconfig-high">
+                                    <span class="severity-badge badge-high">HIGH</span>
+                                    <div class="misconfig-title">DS002 - Image user should not be 'root'</div>
+                                    <div class="misconfig-description">Container runs as root user, risque de container escape</div>
+                                </div>
+                                
+                                <div class="misconfig-item misconfig-high">
+                                    <span class="severity-badge badge-high">HIGH</span>
+                                    <div class="misconfig-title">DS029 - apt-get missing --no-install-recommends</div>
+                                    <div class="misconfig-description">Dockerfile.jenkins sans --no-install-recommends</div>
+                                </div>
+                                
+                                <div class="misconfig-item misconfig-medium">
+                                    <span class="severity-badge badge-medium">MEDIUM</span>
+                                    <div class="misconfig-title">DS013 - RUN cd instead of WORKDIR</div>
+                                    <div class="misconfig-description">Dockerfile: RUN cd /app/bad && python db_init.py</div>
+                                </div>
+                                
+                                <div class="misconfig-item misconfig-low">
+                                    <span class="severity-badge badge-low">LOW</span>
+                                    <div class="misconfig-title">DS026 - No HEALTHCHECK defined</div>
+                                    <div class="misconfig-description">Pas de HEALTHCHECK pour monitoring des containers</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- PHASE 2 - APRÈS -->
+                    <div class="phase phase-after">
+                        <div class="phase-header">✅ PHASE 2 - APRÈS CORRECTIONS</div>
+                        <div class="phase-body">
+                            <div class="metrics">
+                                <div class="metric">
+                                    <div class="metric-value">0</div>
+                                    <div class="metric-label">Misconfigs détectées</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">0</div>
+                                    <div class="metric-label">HIGH</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">0</div>
+                                    <div class="metric-label">MEDIUM</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">0</div>
+                                    <div class="metric-label">LOW</div>
+                                </div>
+                            </div>
+                            
+                            <div class="info-box">
+                                ✅ Toutes les misconfigurations Dockerfile corrigées avec succès !
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="improvement">
+                    <div class="improvement-title">🔧 Corrections Appliquées au Dockerfile</div>
+                    <ul class="improvement-list">
+                        <li><strong>DS002:</strong> Ajout d'un utilisateur non-root (vulpy:1000) avec USER vulpy</li>
+                        <li><strong>DS013:</strong> Remplacement de RUN cd par WORKDIR /app/bad</li>
+                        <li><strong>DS026:</strong> Ajout HEALTHCHECK avec vérification HTTP vers /hello</li>
+                        <li><strong>DS029:</strong> Ajout du flag --no-install-recommends aux apt-get</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- TAB 2: SUPPLY CHAIN VULNERABILITIES -->
+            <div id="supply-chain" class="tab-content">
+                <div class="info-box">
+                    ℹ️ Les vulnérabilités de la chaîne d'approvisionnement (62) proviennent de l'image Docker de base (python:3.11-slim Debian) et ne peuvent pas être corrigées en modifiant le code source.
+                </div>
+                
+                <div class="comparison">
+                    <div class="phase phase-before">
+                        <div class="phase-header">❌ PHASE 1 - AVANT</div>
+                        <div class="phase-body">
+                            <div class="metrics">
+                                <div class="metric">
+                                    <div class="metric-value">62</div>
+                                    <div class="metric-label">Vulnérabilités détectées</div>
+                                </div>
+                            </div>
+                            <div class="misconfig-description" style="padding: 10px; background: white; border-radius: 5px;">
+                                <strong>Source:</strong> python:3.11-slim (Debian 13.2)<br>
+                                <strong>Paquets affectés:</strong> apt-key, util-linux, coreutils, glibc<br>
+                                <strong>Impact:</strong> Privilege escalation, buffer overflow, race conditions
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase phase-after">
+                        <div class="phase-header">⚠️ PHASE 2 - APRÈS</div>
+                        <div class="phase-body">
+                            <div class="metrics">
+                                <div class="metric">
+                                    <div class="metric-value">62</div>
+                                    <div class="metric-label">Vulnérabilités détectées</div>
+                                </div>
+                            </div>
+                            <div class="info-box" style="background: #fff3cd; border-left-color: #ff9800; color: #856404;">
+                                ⚠️ Aucun changement - Les vulnérabilités OS ne sont pas impactées par les corrections de code source
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="improvement">
+                    <div class="improvement-title">📋 Recommandations pour Réduire les Vulnérabilités Supply Chain</div>
+                    <ul class="improvement-list">
+                        <li>Mettre à jour l'image Docker de base vers une version plus récente et corrigée</li>
+                        <li>Utiliser une image distroless (python:3.11-slim-bookworm) pour réduire la surface d'attaque</li>
+                        <li>Implémenter un processus de mise à jour régulière des dépendances</li>
+                        <li>Utiliser Docker scan ou Trivy en CI/CD pour détecter les nouvelles vulnérabilités</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="summary">
+                <h3>📈 Résumé SCA Trivy</h3>
+                <p><strong>Dockerfile:</strong> 100% des misconfigurations corrigées (4 → 0) ✅</p>
+                <p><strong>Supply Chain:</strong> 62 vulnérabilités OS (requires image update) ⚠️</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab and mark button as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+================================================================================
+🔍 RAPPORT DE COMPARAISON - BANDIT BAD vs GOOD (SANS CORRECTION)
+================================================================================
+
+✅ RÉSULTATS DE L'ANALYSE:
+===========================
+
+VULNÉRABILITÉS PRÉSENTES DANS BAD:
+  B105, B108, B110, B113, B201, B311, B404, B603, B608
+
+VULNÉRABILITÉS PRÉSENTES DANS GOOD:
+  B105, B108, B110, B113, B201, B321, B335, B608
+
+================================================================================
+
+🔴 PROBLÈME MAJEUR IDENTIFIÉ:
+==============================
+
+GOOD CONTIENT DES VULNÉRABILITÉS QUE BAD N'A PAS:
+  ✗ B321 - blacklist (cryptography)
+  ✗ B335 - hardcoded_bind_all_interfaces
+
+GOOD MANQUE DES VULNÉRABILITÉS QUE BAD A:
+  ✗ B311 - pickle (bad/libuser.py)
+  ✗ B404 - import_subprocess (bad/mod_posts.py, bad/mod_user.py)
+  ✗ B603 - subprocess_without_shell_equals_true
+
+CELA SIGNIFIE QUE:
+→ GOOD et BAD ne sont PAS identiques
+→ Les fichiers ont des différences
+
+================================================================================
+
+📋 FICHIERS À VÉRIFIER:
+=======================
+
+Fichiers présents dans BAD mais peut-être pas en GOOD:
+  - bad/mod_posts.py (contient B404, B603)
+  - bad/mod_user.py (contient B404, B311)
+  - D'autres fichiers?
+
+Fichiers EXTRA ou différents dans GOOD:
+  - good/cutpasswd.py (contient B108 - /tmp)
+
+================================================================================
+
+✅ ACTION IMMÉDIATE À FAIRE:
+============================
+
+1. Vérifier la structure des répertoires good/ et bad/
+2. Comparer les fichiers ligne par ligne
+3. S'assurer que GOOD contient EXACTEMENT les mêmes fichiers que BAD
+4. Si différent: aligner les répertoires
+5. Rebuild le pipeline
+
+================================================================================
+
+📊 COMPTAGE FINAL:
+==================
+
+Test IDs uniques trouvés:
+- BAD: B105, B108, B110, B113, B201, B311, B404, B603, B608 (9 types)
+- GOOD: B105, B108, B110, B113, B201, B321, B335, B608 (8 types)
+
+Nombre de vulnérabilités (compte total avec doublons):
+- BAD: 22 vulnérabilités
+- GOOD: 11 vulnérabilités
+
+EXPLICATION:
+Les fichiers BAD et GOOD sont DIFFÉRENTS en contenu/structure.
+Il y a des fichiers .py extra ou manquants entre les deux répertoires.
+
+================================================================================
+
+🚨 RECOMMANDATION:
+===================
+
+ÉTAPE 1: Listez tous les fichiers .py dans bad/
+ÉTAPE 2: Listez tous les fichiers .py dans good/
+ÉTAPE 3: Faites une copie identique (ou synchronisez)
+ÉTAPE 4: Rebuild le pipeline
+ÉTAPE 5: Vérifiez que les résultats sont maintenant identiques
+
+================================================================================

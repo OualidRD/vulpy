@@ -1,0 +1,86 @@
+#!/bin/bash
+# Script de déploiement multi-phase pour l'analyse de sécurité
+
+echo "======================================================"
+echo "VULPY Security Analysis - Multi-Phase Pipeline"
+echo "======================================================"
+echo ""
+
+# Couleurs
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# ============= PHASE 1: BEFORE (GOOD vulnérable) =============
+echo -e "${BLUE}====== PHASE 1: ANALYSE INITIALE (GOOD Vulnérable) ======${NC}"
+echo ""
+echo "État: GOOD contient les mêmes vulnérabilités que BAD"
+echo "Objectif: Identifier les vulnérabilités à corriger"
+echo ""
+echo -e "${YELLOW}Actions:${NC}"
+echo "1. Vérifier que good/vulpy.py et good/vulpy-ssl.py contiennent debug=True"
+echo "2. Déclencher un build Jenkins"
+echo "3. Télécharger les rapports:"
+echo "   - bandit-good.html (18 vulnérabilités attendues)"
+echo "   - trivy-image.json"
+echo "   - trivy-fs.json"
+echo ""
+echo "Fichiers à conserver:"
+echo "  → screenshots/1_bandit_good_BEFORE.html"
+echo "  → reports/bandit-good-BEFORE.html"
+echo ""
+read -p "Appuyez sur ENTER quand la Phase 1 est terminée..."
+echo ""
+
+# ============= PHASE 2: AFTER (GOOD corrigé) =============
+echo -e "${GREEN}====== PHASE 2: CORRECTION DU CODE (GOOD Sécurisé) ======${NC}"
+echo ""
+echo "État: Application des corrections de sécurité"
+echo "Objectif: Montrer l'amélioration après correction"
+echo ""
+echo -e "${YELLOW}Corrections à appliquer:${NC}"
+echo ""
+echo "1. good/vulpy.py (ligne ~53):"
+echo "   ❌ AVANT: app.run(debug=True, ...)"
+echo "   ✅ APRÈS: app.run(debug=os.environ.get('FLASK_ENV')=='development', ...)"
+echo ""
+echo "2. good/vulpy-ssl.py (ligne ~29):"
+echo "   ❌ AVANT: ssl_context=('/tmp/acme.cert', '/tmp/acme.key')"
+echo "   ✅ APRÈS: Variables d'environnement + chemins sécurisés"
+echo ""
+echo -e "${YELLOW}Actions:${NC}"
+echo "1. Appliquer les corrections dans good/"
+echo "2. Committer les changements"
+echo "3. Déclencher un nouveau build Jenkins"
+echo "4. Télécharger les rapports (16 vulnérabilités attendues)"
+echo ""
+echo "Fichiers à conserver:"
+echo "  → screenshots/2_bandit_good_AFTER.html"
+echo "  → reports/bandit-good-AFTER.html"
+echo ""
+read -p "Appuyez sur ENTER quand la Phase 2 est terminée..."
+echo ""
+
+# ============= PHASE 3: COMPARAISON =============
+echo -e "${BLUE}====== PHASE 3: COMPARAISON & RAPPORT FINAL ======${NC}"
+echo ""
+echo -e "${YELLOW}Résultats attendus:${NC}"
+echo ""
+echo "SAST (Bandit):"
+echo "  BEFORE: 18 vulnérabilités (2 HIGH, 11 MEDIUM, 5 LOW)"
+echo "  AFTER:  16 vulnérabilités (0 HIGH, 11 MEDIUM, 5 LOW)"
+echo "  Amélioration: -2 vulnérabilités HIGH (-100%)"
+echo ""
+echo "SCA (Trivy):"
+echo "  BEFORE: 10 vulnérabilités (3 secrets, 5 Debian, 2 dépendances)"
+echo "  AFTER:  10 vulnérabilités (même)"
+echo ""
+echo -e "${YELLOW}Fichiers finaux:${NC}"
+echo "  ✓ Rapport_Complet_SAST_SCA.tex (mis à jour)"
+echo "  ✓ screenshots/ (5 images PNG)"
+echo "  ✓ reports/ (6 artefacts HTML/JSON)"
+echo ""
+echo -e "${GREEN}====== Analyse complétée! ======${NC}"
+echo ""
